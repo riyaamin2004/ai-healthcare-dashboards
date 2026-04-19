@@ -3,171 +3,146 @@ import pandas as pd
 import random
 from datetime import datetime
 
-# --- SET PAGE CONFIG ---
-st.set_page_config(
-    page_title="MediCore HUD",
-    page_icon="🧬",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="MediCore.AI | Healthcare OS", layout="wide", page_icon="🏥")
 
-# --- NEON MEDICAL THEME CSS ---
+# --- MODERN ENTERPRISE UI (CSS) ---
 st.markdown("""
     <style>
-    /* Dark Slate Background */
-    .stApp {
-        background-color: #0a0e14;
-        color: #00d4ff;
-    }
+    /* Global Styles */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
 
-    /* Glass Panels */
-    div[data-testid="stVerticalBlock"] > div.element-container:has(div.med-card) {
-        display: block;
+    /* Custom Card */
+    .metric-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
     
-    .med-card {
-        background: rgba(20, 30, 48, 0.6);
-        border: 1px solid #00d4ff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
-        margin-bottom: 20px;
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: white !important;
+        border-right: 1px solid #eee;
     }
 
-    /* Text Glow */
-    h1, h2, h3 {
-        color: #00d4ff !important;
-        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    /* Custom Button */
+    /* Buttons */
     .stButton>button {
-        background-color: transparent;
-        color: #00d4ff;
-        border: 1px solid #00d4ff;
-        width: 100%;
-        border-radius: 5px;
-        transition: 0.3s;
+        background-color: #1a365d;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
     }
     .stButton>button:hover {
-        background-color: #00d4ff;
-        color: #0a0e14;
-        box-shadow: 0 0 15px #00d4ff;
-    }
-
-    /* Metrics Styling */
-    [data-testid="stMetricValue"] {
-        color: #ffffff !important;
+        background-color: #2c5282;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP STATE MANAGEMENT ---
-if "page" not in st.session_state:
-    st.session_state.page = "DASHBOARD"
+# --- MOCK DATASET ---
+if 'patient_data' not in st.session_state:
+    st.session_state.patient_data = pd.DataFrame([
+        {"ID": "P001", "Name": "Riya Sharma", "Symptoms": "Fever, Cough", "Diagnosis": "Viral Flu", "Status": "Recovering"},
+        {"ID": "P002", "Name": "Aman Verma", "Symptoms": "Fatigue", "Diagnosis": "Anemia", "Status": "Stable"},
+        {"ID": "P003", "Name": "Sanya Malhotra", "Symptoms": "Chest Pain", "Diagnosis": "Pending", "Status": "Urgent"},
+        {"ID": "P004", "Name": "Rahul Singh", "Symptoms": "Sneezing", "Diagnosis": "Allergy", "Status": "Stable"}
+    ])
 
-# --- TOP HUD NAVIGATION BAR ---
-st.markdown("<h1 style='text-align: center;'>MEDICORE NEURAL INTERFACE</h1>", unsafe_allow_html=True)
-st.write("---")
+# --- SIDEBAR NAVIGATION ---
+with st.sidebar:
+    st.markdown("### 🏥 MediCore.AI")
+    st.caption("Healthcare OS")
+    st.write("---")
+    menu = st.radio("MODULES", ["Dashboard", "AI Chatbot", "Symptom Checker", "Patient Records"], label_visibility="collapsed")
+    st.divider()
+    st.caption("OOP Pillar: Polymorphism Active")
 
-nav_cols = st.columns(4)
-with nav_cols[0]:
-    if st.button("📡 SYSTEM DASH"): st.session_state.page = "DASHBOARD"
-with nav_cols[1]:
-    if st.button("🧪 DIAGNOSTICS"): st.session_state.page = "DIAG"
-with nav_cols[2]:
-    if st.button("🧠 AI CORE"): st.session_state.page = "AI"
-with nav_cols[3]:
-    if st.button("📂 ARCHIVES"): st.session_state.page = "DATA"
+# --- DASHBOARD ---
+if menu == "Dashboard":
+    st.title("Dashboard")
+    st.caption("AI-assisted healthcare, built on classic OOP pillars.")
 
-st.write("")
+    # Top Hero Section
+    col_hero_1, col_hero_2 = st.columns([2, 1])
+    with col_hero_1:
+        st.markdown("""
+        <div class="metric-card">
+            <h2>AI-assisted healthcare, built on classic OOP pillars.</h2>
+            <p style='color: #718096;'>MediCore AI combines a strongly-typed, inheritance-driven Python backend 
+            with a modern frontend. Every feature is backed by a polymorphic AIService subclass.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Start a consultation ↗"):
+             st.toast("Initializing Neural Core...")
+             
+    with col_hero_2:
+        st.markdown("""
+        <div class="metric-card" style='background: #000; color: #fff;'>
+            <p style='color: #4fd1c5;'>VITALS</p>
+            <h3>Powered by GPT-5.1</h3>
+            <p style='font-size: 12px; color: #a0aec0;'>Via Emergent Universal LLM</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-# --- MODULE 1: DASHBOARD ---
-if st.session_state.page == "DASHBOARD":
-    col1, col2 = st.columns([1, 2])
+    st.write("---")
     
-    with col1:
-        st.markdown('<div class="med-card">', unsafe_allow_html=True)
-        st.subheader("Bio-Telemetry")
-        st.metric("Avg Heart Rate", "74 BPM", "Normal")
-        st.metric("Critical Alerts", "02", "-1")
-        st.metric("Neural Sync", "99.8%", "+0.2%")
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Stats Row
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("TOTAL PATIENTS", len(st.session_state.patient_data))
+    s2.metric("CHAT SESSIONS", "124")
+    s3.metric("AI MESSAGES", "1,042")
+    s4.metric("ACTIVE SERVICES", "3")
+
+# --- SYMPTOM CHECKER ---
+elif menu == "Symptom Checker":
+    st.subheader("🧪 Symptom Checker")
+    with st.container(border=True):
+        col1, col2 = st.columns(2)
+        p_name = col1.text_input("Patient Name")
+        temp = col2.slider("Temperature (°F)", 96, 105, 98)
         
-        st.markdown('<div class="med-card">', unsafe_allow_html=True)
-        st.subheader("Facility Status")
-        st.info("ER Capacity: 84%")
-        st.success("Power: Grid Stable")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="med-card">', unsafe_allow_html=True)
-        st.subheader("Patient Inflow (24H Cycles)")
-        # Using native area chart to avoid ModuleNotFoundError
-        chart_data = pd.DataFrame({
-            "Time": [f"{i}:00" for i in range(24)],
-            "Inpatients": [random.randint(10, 50) for _ in range(24)]
-        }).set_index("Time")
-        st.area_chart(chart_data, color="#00d4ff")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# --- MODULE 2: DIAGNOSTICS ---
-elif st.session_state.page == "DIAG":
-    st.markdown('<div class="med-card">', unsafe_allow_html=True)
-    st.subheader("Symptom Cross-Reference")
-    c1, c2 = st.columns(2)
-    with c1:
-        symptoms = st.multiselect("Active Biomarkers", ["Pyrexia", "Cephalalgia", "Dyspnea", "Nausea"])
-    with c2:
-        severity = st.select_slider("Intensity Level", ["LOW", "MODERATE", "ACUTE", "CRITICAL"])
+        symptoms = st.multiselect("Select Symptoms", ["Fever", "Cough", "Fatigue", "Headache", "Nausea"])
     
-    if st.button("RUN NEURAL SCAN"):
-        with st.spinner("Analyzing patterns..."):
-            st.toast("Scanning Global Medical Database...")
-            if "Pyrexia" in symptoms:
-                st.error("MATCH FOUND: High probability of Viral Infection.")
+    if st.button("Analyze & Save to Records"):
+        with st.spinner("Analyzing..."):
+            # Simple Logic Checker
+            if "Fever" in symptoms and "Cough" in symptoms:
+                diag = "Flu/Cold"
+            elif "Fatigue" in symptoms:
+                diag = "Exhaustion"
             else:
-                st.success("NO ACUTE THREATS DETECTED.")
-    st.markdown('</div>', unsafe_allow_html=True)
+                diag = "Minor Ailment"
+            
+            # Update Dataframe
+            new_entry = {"ID": f"P00{len(st.session_state.patient_data)+1}", 
+                         "Name": p_name if p_name else "Anonymous", 
+                         "Symptoms": ", ".join(symptoms), 
+                         "Diagnosis": diag, 
+                         "Status": "New Entry"}
+            
+            st.session_state.patient_data = pd.concat([st.session_state.patient_data, pd.DataFrame([new_entry])], ignore_index=True)
+            st.success(f"Diagnosis: {diag} - Record Updated!")
 
-# --- MODULE 3: AI CORE ---
-elif st.session_state.page == "AI":
-    st.subheader("🧠 Neural Chat Link")
+# --- AI CHATBOT ---
+elif menu == "AI Chatbot":
+    st.subheader("🤖 AI Chatbot")
+    st.chat_message("assistant").write("Hello, I am Dr. Aria. How can I help you today?")
+    if prompt := st.chat_input("Ask about symptoms..."):
+        st.chat_message("user").write(prompt)
+        st.chat_message("assistant").write("I've analyzed your query against the OOP architecture. Please consult a human doctor for final verification.")
+
+# --- PATIENT RECORDS ---
+elif menu == "Patient Records":
+    st.subheader("👨‍⚕️ Patient Database")
+    st.dataframe(st.session_state.patient_data, use_container_width=True, hide_index=True)
     
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    # Chat display
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-
-    if prompt := st.chat_input("Query the Neural Core..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.write(prompt)
-        
-        with st.chat_message("assistant"):
-            response = f"Neural Core Response: The query '{prompt}' has been analyzed. Based on 2026 clinical protocols, no immediate intervention is required."
-            st.write(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-
-# --- MODULE 4: ARCHIVES ---
-elif st.session_state.page == "DATA":
-    st.subheader("📂 Patient Encryption Vault")
-    data = pd.DataFrame({
-        "Patient ID": ["#9901", "#9902", "#9903"],
-        "Registry Name": ["Alpha-Zero", "Beta-One", "Gamma-Nine"],
-        "Last Scan": ["2026-04-10", "2026-04-12", "2026-04-15"],
-        "Integrity": ["100%", "94%", "98%"]
-    })
-    st.dataframe(data, use_container_width=True, hide_index=True)
-
-# --- SYSTEM FOOTER ---
-st.write("---")
-f1, f2, f3 = st.columns(3)
-f1.caption(f"SYSTEM TIME: {datetime.now().strftime('%H:%M:%S')}")
-f2.caption("SECURITY: AES-512 QUANTUM READY")
-f3.caption("USER: ADMIN_CORE_01")
+    # Simple search
+    search = st.text_input("🔍 Search patient by name")
+    if search:
+        filtered = st.session_state.patient_data[st.session_state.patient_data['Name'].str.contains(search, case=False)]
+        st.write(filtered)
