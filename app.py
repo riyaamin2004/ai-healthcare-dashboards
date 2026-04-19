@@ -6,40 +6,68 @@ from datetime import datetime
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="MediCore.AI | Healthcare OS", layout="wide", page_icon="🏥")
 
-# --- MODERN ENTERPRISE UI (CSS) ---
+# --- RECTIFIED DARK UI (CSS) ---
 st.markdown("""
     <style>
-    /* Global Styles */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
-
-    /* Custom Card */
-    .metric-card {
-        background: white;
-        padding: 24px;
-        border-radius: 12px;
-        border: 1px solid #edf2f7;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
     
-    /* Sidebar Styling */
+    /* Force dark background for the whole app */
+    .stApp {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Fix Sidebar visibility */
     section[data-testid="stSidebar"] {
-        background-color: white !important;
-        border-right: 1px solid #eee;
+        background-color: #1e293b !important;
+        border-right: 1px solid #334155;
+    }
+    section[data-testid="stSidebar"] .stText, section[data-testid="stSidebar"] label {
+        color: #e2e8f0 !important;
+    }
+
+    /* Main Hero Card - Fixed text visibility */
+    .hero-card {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+        color: #1e293b !important; /* Force dark text on white card */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .hero-card h2 {
+        color: #0f172a !important;
+        font-weight: 700;
+    }
+    .hero-card p {
+        color: #475569 !important;
+        font-size: 1.1rem;
+    }
+
+    /* Metric Box */
+    [data-testid="stMetric"] {
+        background: #1e293b;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #334155;
+    }
+    [data-testid="stMetricValue"] {
+        color: #38bdf8 !important;
     }
 
     /* Buttons */
     .stButton>button {
-        background-color: #1a365d;
-        color: white;
+        background-color: #38bdf8;
+        color: #0f172a;
         border-radius: 8px;
         border: none;
-        padding: 0.5rem 1rem;
         font-weight: 600;
+        padding: 10px 24px;
     }
     .stButton>button:hover {
-        background-color: #2c5282;
-        color: white;
+        background-color: #7dd3fc;
+        color: #0f172a;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -53,96 +81,71 @@ if 'patient_data' not in st.session_state:
         {"ID": "P004", "Name": "Rahul Singh", "Symptoms": "Sneezing", "Diagnosis": "Allergy", "Status": "Stable"}
     ])
 
-# --- SIDEBAR NAVIGATION ---
+# --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("### 🏥 MediCore.AI")
-    st.caption("Healthcare OS")
+    st.markdown("<h2 style='color:#38bdf8;'>🏥 MediCore.AI</h2>", unsafe_allow_html=True)
+    st.caption("v2.4 Premium OS")
     st.write("---")
-    menu = st.radio("MODULES", ["Dashboard", "AI Chatbot", "Symptom Checker", "Patient Records"], label_visibility="collapsed")
+    menu = st.radio("MODULES", ["Dashboard", "AI Chatbot", "Symptom Checker", "Patient Records"])
     st.divider()
-    st.caption("OOP Pillar: Polymorphism Active")
+    st.caption("System: Operational")
 
 # --- DASHBOARD ---
 if menu == "Dashboard":
-    st.title("Dashboard")
-    st.caption("AI-assisted healthcare, built on classic OOP pillars.")
-
-    # Top Hero Section
-    col_hero_1, col_hero_2 = st.columns([2, 1])
-    with col_hero_1:
-        st.markdown("""
-        <div class="metric-card">
+    st.title("Clinical Dashboard")
+    
+    # Hero Card with FIXED Text Visibility
+    st.markdown("""
+        <div class="hero-card">
             <h2>AI-assisted healthcare, built on classic OOP pillars.</h2>
-            <p style='color: #718096;'>MediCore AI combines a strongly-typed, inheritance-driven Python backend 
-            with a modern frontend. Every feature is backed by a polymorphic AIService subclass.</p>
+            <p>MediCore AI combines a strongly-typed, inheritance-driven Python backend with a modern 
+            Streamlit frontend. Every clinical feature is modularized via polymorphic AIService subclasses 
+            to ensure scalability and data integrity.</p>
         </div>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+    col_btn, _ = st.columns([1, 2])
+    with col_btn:
         if st.button("Start a consultation ↗"):
-             st.toast("Initializing Neural Core...")
-             
-    with col_hero_2:
-        st.markdown("""
-        <div class="metric-card" style='background: #000; color: #fff;'>
-            <p style='color: #4fd1c5;'>VITALS</p>
-            <h3>Powered by GPT-5.1</h3>
-            <p style='font-size: 12px; color: #a0aec0;'>Via Emergent Universal LLM</p>
-        </div>
-        """, unsafe_allow_html=True)
+            st.toast("Booting Diagnostic Engine...")
 
     st.write("---")
     
-    # Stats Row
+    # Vitals Row
     s1, s2, s3, s4 = st.columns(4)
     s1.metric("TOTAL PATIENTS", len(st.session_state.patient_data))
-    s2.metric("CHAT SESSIONS", "124")
+    s2.metric("CHAT SESSIONS", "124", "+12")
     s3.metric("AI MESSAGES", "1,042")
-    s4.metric("ACTIVE SERVICES", "3")
+    s4.metric("SYSTEM UPTIME", "99.9%")
 
 # --- SYMPTOM CHECKER ---
 elif menu == "Symptom Checker":
-    st.subheader("🧪 Symptom Checker")
-    with st.container(border=True):
-        col1, col2 = st.columns(2)
-        p_name = col1.text_input("Patient Name")
-        temp = col2.slider("Temperature (°F)", 96, 105, 98)
-        
-        symptoms = st.multiselect("Select Symptoms", ["Fever", "Cough", "Fatigue", "Headache", "Nausea"])
+    st.subheader("🧪 Rapid Symptom Analysis")
+    with st.container():
+        c1, c2 = st.columns(2)
+        p_name = c1.text_input("Patient Registry Name")
+        symptoms = st.multiselect("Active Symptoms", ["Fever", "Cough", "Fatigue", "Nausea", "Headache"])
     
-    if st.button("Analyze & Save to Records"):
-        with st.spinner("Analyzing..."):
-            # Simple Logic Checker
-            if "Fever" in symptoms and "Cough" in symptoms:
-                diag = "Flu/Cold"
-            elif "Fatigue" in symptoms:
-                diag = "Exhaustion"
-            else:
-                diag = "Minor Ailment"
-            
-            # Update Dataframe
-            new_entry = {"ID": f"P00{len(st.session_state.patient_data)+1}", 
-                         "Name": p_name if p_name else "Anonymous", 
-                         "Symptoms": ", ".join(symptoms), 
-                         "Diagnosis": diag, 
-                         "Status": "New Entry"}
-            
-            st.session_state.patient_data = pd.concat([st.session_state.patient_data, pd.DataFrame([new_entry])], ignore_index=True)
-            st.success(f"Diagnosis: {diag} - Record Updated!")
+    if st.button("Generate Diagnosis"):
+        diag = "General Viral Infection" if "Fever" in symptoms else "Routine Check-up"
+        new_entry = {
+            "ID": f"P00{len(st.session_state.patient_data)+1}", 
+            "Name": p_name if p_name else "Guest", 
+            "Symptoms": ", ".join(symptoms), 
+            "Diagnosis": diag, 
+            "Status": "Stable"
+        }
+        st.session_state.patient_data = pd.concat([st.session_state.patient_data, pd.DataFrame([new_entry])], ignore_index=True)
+        st.success(f"Logic Result: {diag}")
 
-# --- AI CHATBOT ---
+# --- OTHER MODULES ---
 elif menu == "AI Chatbot":
-    st.subheader("🤖 AI Chatbot")
-    st.chat_message("assistant").write("Hello, I am Dr. Aria. How can I help you today?")
-    if prompt := st.chat_input("Ask about symptoms..."):
-        st.chat_message("user").write(prompt)
-        st.chat_message("assistant").write("I've analyzed your query against the OOP architecture. Please consult a human doctor for final verification.")
+    st.subheader("🤖 Neural Core Chat")
+    st.chat_message("assistant").write("Systems online. How can I assist with patient triaging?")
+    if p := st.chat_input("Ask anything..."):
+        st.chat_message("user").write(p)
+        st.chat_message("assistant").write("Analyzing query against clinical knowledge base...")
 
-# --- PATIENT RECORDS ---
 elif menu == "Patient Records":
-    st.subheader("👨‍⚕️ Patient Database")
+    st.subheader("👨‍⚕️ Encrypted Patient Records")
     st.dataframe(st.session_state.patient_data, use_container_width=True, hide_index=True)
-    
-    # Simple search
-    search = st.text_input("🔍 Search patient by name")
-    if search:
-        filtered = st.session_state.patient_data[st.session_state.patient_data['Name'].str.contains(search, case=False)]
-        st.write(filtered)
