@@ -3,83 +3,41 @@ import random
 
 st.set_page_config(page_title="MediCore AI", layout="wide")
 
-# -------- BACKGROUND + GLASS UI --------
-st.markdown("""
-<style>
-
-/* Background */
-.stApp {
-    background: radial-gradient(circle at 20% 20%, #1e293b, #020617);
-    color: white;
-}
-
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(10px);
-}
-
-/* Glass Card */
-.card {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 25px;
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0px 8px 32px rgba(0,0,0,0.4);
-}
-
-/* Title */
-.title {
-    font-size: 32px;
-    font-weight: 700;
-}
-
-/* Subtext */
-.sub {
-    color: #94a3b8;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
 # -------- SIDEBAR --------
-st.sidebar.markdown("## 🏥 MediCore AI")
+st.sidebar.markdown("## 🏥 MediCore.AI")
 st.sidebar.caption("Healthcare OS")
 
 menu = st.sidebar.radio(
-    "",
-    ["Dashboard", "Symptom Checker", "AI Chatbot"]
+    "Modules",
+    ["Dashboard", "Symptom Checker", "AI Chatbot", "Report Analyzer", "Patient Records"]
 )
 
 # -------- DASHBOARD --------
 if menu == "Dashboard":
-    st.markdown('<div class="title">🚀 Healthcare Analytics Dashboard</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub">AI-Powered Diagnostics</div>', unsafe_allow_html=True)
+    st.title("📊 MediCore AI Dashboard")
+    st.markdown("### AI-assisted healthcare system")
 
     col1, col2, col3 = st.columns(3)
 
-    with col1:
-        st.markdown('<div class="card">👥 Total Patients<br><h1>128</h1></div>', unsafe_allow_html=True)
+    col1.metric("Patients", "120")
+    col2.metric("Common Disease", "Flu")
+    col3.metric("Accuracy", "87%")
 
-    with col2:
-        st.markdown('<div class="card">🦠 Common Disease<br><h1>Flu</h1></div>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.subheader("System Overview")
 
-    with col3:
-        st.markdown('<div class="card">📈 Accuracy<br><h1>89%</h1></div>', unsafe_allow_html=True)
-
-    st.markdown("### 📊 Disease Distribution")
+    st.write("This system simulates AI-based healthcare using rule-based logic.")
 
     st.bar_chart({
-        "Flu": [47],
-        "Cold": [31],
-        "Allergy": [15],
-        "Stress": [20]
+        "Flu": [12],
+        "Cold": [19],
+        "Allergy": [7],
+        "Stress": [10]
     })
 
 # -------- SYMPTOM CHECKER --------
 elif menu == "Symptom Checker":
-    st.markdown('<div class="title">🧪 Symptom Checker</div>', unsafe_allow_html=True)
+    st.title("🧪 Symptom Checker")
 
     col1, col2 = st.columns(2)
 
@@ -91,8 +49,8 @@ elif menu == "Symptom Checker":
         fatigue = st.selectbox("Fatigue", ["No", "Yes"])
         cough = st.selectbox("Cough", ["No", "Yes"])
 
-    if st.button("Analyze"):
-        confidence = random.randint(85, 95)
+    if st.button("Analyze Symptoms"):
+        confidence = random.randint(80, 95)
 
         if fever == "Yes" and headache == "Yes":
             disease = "Flu"
@@ -104,17 +62,39 @@ elif menu == "Symptom Checker":
 
         else:
             disease = "No major illness"
-            advice = "Maintain healthy lifestyle"
+            advice = "Stay healthy"
 
-        st.success(f"🩺 {disease}")
-        st.info(f"💊 {advice}")
-        st.warning(f"📊 Confidence: {confidence}%")
+        st.success(f"Diagnosis: {disease}")
+        st.info(f"Advice: {advice}")
+        st.warning(f"Confidence: {confidence}%")
 
-# -------- CHATBOT --------
+# -------- AI CHATBOT --------
 elif menu == "AI Chatbot":
-    st.markdown('<div class="title">🤖 AI Assistant</div>', unsafe_allow_html=True)
+    st.title("🤖 AI Chatbot")
 
-    user_input = st.text_input("Ask a question")
+    user_input = st.text_input("Ask a health question:")
 
     if user_input:
-        st.markdown('<div class="card">AI Response: Please consult a doctor for accurate diagnosis.</div>', unsafe_allow_html=True)
+        st.write("AI Response:")
+        st.success("Based on your query, please consult a doctor for accurate diagnosis.")
+
+# -------- REPORT ANALYZER --------
+elif menu == "Report Analyzer":
+    st.title("📄 Report Analyzer")
+
+    file = st.file_uploader("Upload medical report")
+
+    if file:
+        st.success("Report uploaded successfully!")
+        st.info("Basic analysis: No critical issues detected.")
+
+# -------- PATIENT RECORDS --------
+elif menu == "Patient Records":
+    st.title("👨‍⚕️ Patient Records")
+
+    st.write("Sample Records:")
+    st.table({
+        "Name": ["Riya", "Aman"],
+        "Disease": ["Flu", "Cold"],
+        "Status": ["Recovering", "Stable"]
+    })
