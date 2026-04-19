@@ -1,178 +1,215 @@
 import streamlit as st
-import random
 import pandas as pd
+import time
 from datetime import datetime
 
-# --- PAGE CONFIG ---
+# --- SET PAGE CONFIG ---
 st.set_page_config(
-    page_title="MediCore AI | Healthcare OS",
-    page_icon="🏥",
+    page_title="MediCore AI | Premium",
+    page_icon="🩺",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
-# --- CUSTOM CSS FOR BETTER UI ---
+# --- LUXURY UI THEMING ---
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
+    /* Main Background */
+    .stApp {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
-    .stMetric {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    
+    /* Custom Card Styling */
+    .metric-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #eef2f6;
+        text-align: center;
     }
-    div.stButton > button:first-child {
-        background-color: #007bff;
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #1e293b;
+    }
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    
+    /* Button Styling */
+    .stButton>button {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background-color: #0ea5e9;
         color: white;
-        border-radius: 5px;
-        width: 100%;
+        border: none;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+# --- SESSION STATE INITIALIZATION ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# --- SIDEBAR NAVIGATION ---
 with st.sidebar:
-    st.markdown("# 🏥 MediCore.AI")
-    st.caption("Next-Gen Healthcare OS")
+    st.image("https://cdn-icons-png.flaticon.com/512/387/387561.png", width=80)
+    st.markdown("## MediCore AI")
+    st.caption("Clinical Intelligence OS v2.0")
     st.divider()
     
-    menu = st.selectbox(
-        "Navigation",
-        ["Dashboard", "Symptom Checker", "AI Chatbot", "Report Analyzer", "Patient Records"],
-        index=0
+    menu = st.radio(
+        "NAVIGATION",
+        ["System Dashboard", "Symptom Analysis", "Medical Chatbot", "Lab Analyzer", "Patient Database"],
+        label_visibility="collapsed"
     )
     
-    st.sidebar.info("Logged in as: **Dr. Anderson**")
-    if st.sidebar.button("Logout"):
-        st.toast("Logging out...")
-
-# --- DASHBOARD ---
-if menu == "Dashboard":
-    st.title("📊 Clinical Dashboard")
-    st.markdown(f"**Welcome back.** Today is {datetime.now().strftime('%A, %d %B %Y')}")
-
-    # Metrics Row
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Active Patients", "142", "+4%")
-    m2.metric("Critical Alerts", "3", "-12%")
-    m3.metric("Avg. Wait Time", "14 min", "-2m")
-    m4.metric("AI Accuracy", "94.2%", "+0.5%")
-
+    st.spacer = st.empty()
     st.divider()
+    st.info("System Status: **Operational**")
 
-    col_left, col_right = st.columns([2, 1])
+# --- DASHBOARD MODULE ---
+if menu == "System Dashboard":
+    st.title("📊 Clinical Overview")
+    st.markdown("Real-time telemetry and patient distribution.")
 
-    with col_left:
-        st.subheader("Patient Inflow Trends")
-        chart_data = pd.DataFrame({
-            "Time": ["8AM", "10AM", "12PM", "2PM", "4PM", "6PM"],
-            "Outpatient": [10, 25, 40, 35, 50, 30],
-            "Emergency": [2, 5, 3, 8, 4, 6]
-        }).set_index("Time")
-        st.area_chart(chart_data)
+    # Top Metrics
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Total Patients", "1,284", "+12%")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with m2:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Consultations", "48", "Active")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with m3:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Avg Diagnosis Time", "4.2m", "-15s")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with m4:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("System Accuracy", "96.4%", "+0.2%")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_right:
-        st.subheader("Department Load")
-        st.progress(0.85, text="Radiology")
-        st.progress(0.40, text="Cardiology")
-        st.progress(0.65, text="General Medicine")
-        st.progress(0.20, text="Pediatrics")
+    st.markdown("### Disease Prevalence")
+    chart_data = pd.DataFrame({
+        "Condition": ["Influenza", "Type 2 Diabetes", "Hypertension", "Allergies", "Fatigue"],
+        "Case Count": [45, 32, 56, 21, 15]
+    })
+    st.bar_chart(chart_data, x="Condition", y="Case Count", color="#0ea5e9")
 
-# --- SYMPTOM CHECKER ---
-elif menu == "Symptom Checker":
-    st.title("🧪 Diagnostic Assistant")
-    st.write("Input symptoms for a preliminary AI assessment.")
-
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1:
-            fever = st.slider("Body Temperature (°C)", 36.0, 41.0, 37.0, 0.1)
-            cough = st.toggle("Persistent Cough")
-        with c2:
-            duration = st.number_input("Duration of symptoms (Days)", 0, 30)
-            fatigue = st.select_slider("Fatigue Level", ["Low", "Moderate", "High", "Extreme"])
-
-    if st.button("Generate Diagnostic Report"):
-        with st.spinner("Analyzing medical patterns..."):
-            # Logic improvisation
-            if fever > 38.5 and cough:
-                res, color = "High probability of Viral Infection", "error"
-            elif fever > 37.5 and duration > 3:
-                res, color = "Mild Infection / Common Cold", "warning"
-            else:
-                res, color = "No immediate concerns detected", "success"
-            
-            st.toast("Analysis Complete")
-            if color == "error": st.error(res)
-            elif color == "warning": st.warning(res)
-            else: st.success(res)
-            
-            st.info("**Recommended Action:** Monitor temperature every 4 hours and maintain hydration.")
-
-# --- AI CHATBOT ---
-elif menu == "AI Chatbot":
-    st.title("🤖 Medical AI Assistant")
+# --- SYMPTOM ANALYSIS ---
+elif menu == "Symptom Analysis":
+    st.title("🧪 Smart Diagnostics")
     
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    with st.expander("Patient Demographics", expanded=True):
+        c1, c2, c3 = st.columns(3)
+        age = c1.number_input("Age", 0, 120, 25)
+        gender = c2.selectbox("Gender", ["Male", "Female", "Other"])
+        blood_group = c3.selectbox("Blood Group", ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"])
 
-    # Display chat history
+    st.subheader("Current Symptoms")
+    symptoms = st.multiselect(
+        "Select all that apply:",
+        ["High Fever", "Dry Cough", "Chest Pain", "Shortness of Breath", "Fatigue", "Headache", "Loss of Taste"]
+    )
+    
+    severity = st.select_slider("Symptom Severity", options=["Mild", "Moderate", "Severe", "Critical"])
+
+    if st.button("Run AI Diagnostic"):
+        with st.status("Analyzing medical databases...", expanded=True) as status:
+            time.sleep(1)
+            st.write("Cross-referencing symptoms...")
+            time.sleep(1)
+            st.write("Calculating confidence scores...")
+            status.update(label="Analysis Complete!", state="complete", expanded=False)
+        
+        if "High Fever" in symptoms and "Dry Cough" in symptoms:
+            st.error("### Potential Finding: Viral Respiratory Infection")
+            st.warning("**Recommendation:** Immediate PCR test and self-isolation.")
+        else:
+            st.success("### Finding: No Critical Patterns Detected")
+            st.info("General wellness advised. Increase fluid intake.")
+
+# --- MEDICAL CHATBOT ---
+elif menu == "Medical Chatbot":
+    st.title("🤖 MediCore AI Assistant")
+    st.caption("Ask questions about medications, symptoms, or general health.")
+
+    # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Chat input
-    if prompt := st.chat_input("How can I help you today?"):
+    if prompt := st.chat_input("What is the dosage for Paracetamol?"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            response = "I am a simulated AI. In a production app, I would connect to a LLM to answer: " + prompt
+            # Mocking a smart response
+            response = f"Based on medical guidelines, your query regarding '{prompt}' requires professional verification, but generally..."
             st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-# --- REPORT ANALYZER ---
-elif menu == "Report Analyzer":
-    st.title("📄 Smart Report Parser")
-    st.info("Upload a PDF or Image of a blood report to extract key biomarkers.")
-
-    uploaded_file = st.file_uploader("Choose a file", type=['pdf', 'png', 'jpg'])
-
+# --- LAB ANALYZER ---
+elif menu == "Lab Analyzer":
+    st.title("📄 Lab Report Intelligence")
+    
+    uploaded_file = st.file_uploader("Drop medical PDF or Image here", type=["pdf", "png", "jpg"])
+    
     if uploaded_file:
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([1, 1])
         with col1:
-            st.image("https://via.placeholder.com/400x500.png?text=Scanning+Document...", caption="Analyzing Document")
+            st.success("File Uploaded!")
+            st.image("https://via.placeholder.com/300x400.png?text=Report+Preview", use_container_width=True)
         with col2:
-            st.subheader("Extracted Biomarkers")
-            data = {
-                "Marker": ["Hemoglobin", "WBC Count", "Glucose", "Cholesterol"],
-                "Value": ["14.2 g/dL", "8,500", "95 mg/dL", "180 mg/dL"],
-                "Status": ["✅ Normal", "✅ Normal", "✅ Normal", "⚠️ Borderline"]
-            }
-            st.table(pd.DataFrame(data))
+            st.subheader("Detected Values")
+            results = pd.DataFrame({
+                "Metric": ["Glucose", "HbA1c", "HDL", "LDL"],
+                "Result": [110, 5.7, 45, 120],
+                "Range": ["70-100", "< 5.7", "> 40", "< 100"],
+                "Status": ["High", "Normal", "Normal", "High"]
+            })
+            st.table(results)
+            st.toast("Anomalies detected in Glucose and LDL", icon="⚠️")
 
-# --- PATIENT RECORDS ---
-elif menu == "Patient Records":
-    st.title("👨‍⚕️ Digital Health Records")
+# --- PATIENT DATABASE ---
+elif menu == "Patient Database":
+    st.title("👨‍⚕️ Patient Record Management")
     
-    search = st.text_input("🔍 Search by Name or ID")
-    
-    records = pd.DataFrame({
-        "Patient ID": ["#1021", "#1022", "#1023", "#1024"],
-        "Name": ["Riya Sharma", "Aman Verma", "Sarah Jones", "Kevin Hart"],
-        "Last Visit": ["2024-05-10", "2024-05-12", "2024-05-14", "2024-05-15"],
-        "Diagnosis": ["Influenza", "Common Cold", "Hypertension", "Allergy"],
-        "Status": ["Recovered", "Under Treatment", "Stable", "Follow-up"]
-    })
+    # Mock Data
+    data = {
+        "ID": ["PX-001", "PX-002", "PX-003", "PX-004", "PX-005"],
+        "Patient Name": ["Alice Smith", "Bob Johnson", "Charlie Davis", "Diana Prince", "Edward Norton"],
+        "Last Checkup": ["2024-03-01", "2024-03-15", "2024-04-02", "2024-04-10", "2024-04-18"],
+        "Primary Doctor": ["Dr. House", "Dr. Strange", "Dr. Grey", "Dr. Watson", "Dr. Brown"],
+        "Priority": ["Medium", "High", "Low", "Critical", "Medium"]
+    }
+    df = pd.DataFrame(data)
 
+    # Search Bar
+    search = st.text_input("Search Patient Registry", placeholder="Enter name or ID...")
     if search:
-        records = records[records['Name'].str.contains(search, case=False)]
+        df = df[df['Patient Name'].str.contains(search, case=False)]
 
-    st.dataframe(records, use_container_width=True, hide_index=True)
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Priority": st.column_config.SelectboxColumn(
+                "Priority",
+                options=["Low", "Medium", "High", "Critical"],
+            ),
+            "Last Checkup": st.column_config.DateColumn("Last Checkup")
+        }
+    )
     
-    if st.button("➕ Add New Patient"):
-        st.write("Redirecting to Patient Intake Form...")
+    st.button("➕ Register New Patient")
